@@ -339,7 +339,7 @@ ok "Subscription fetched"
 ALL_CONFIGS_FILE="$WORK_DIR/all_configs.txt"
 log "Saving all fetched configs..."
 xray-knife subs show --id "$SUB_ID" --urls > "$ALL_CONFIGS_FILE" 2>/dev/null || true
-save_configs "00_All" "$ALL_CONFIGS_FILE"
+#save_configs "00_All" "$ALL_CONFIGS_FILE"
 
 # =============================================================================
 # STEP 2 — test all configs, output sorted CSV
