@@ -1,75 +1,12 @@
-# proxysmith — xray config assembler with balancer and brutal connectivity test
-
-A bash toolkit that automatically fetches, tests, deduplicates, and assembles a production-ready [Xray](https://github.com/XTLS/Xray-core) `config.json` from public proxy subscription feeds — daily, hands-free.
-
-Built for Linux. Designed for operators who run Xray as a local or relay proxy and need a fresh, reliable outbound pool every day without manually testing thousands of configs.
-
----
-
-## Scripts
-
-| Script | Purpose |
-|---|---|
-| `proxysmith.sh` | Full 3-round pipeline: fetch → test → deduplicate → assemble → (optionally) deploy |
-| `manualconfig.sh` | Skip the testing — parse a hand-picked list of URIs directly into a ready `config.json` |
-
----
-
-## How it works
-
-`proxysmith.sh` runs a 3-round brutal elimination pipeline:
-
-```
-~6000 raw configs (from subscription URL)
-        │
-        ▼  Round 1 — concurrent speedtest (configurable threads, default 50)
-        │  deduplicate by proto:host:port
-        │  filter by max latency (configurable, default 5000ms)
-        ▼
-   ~TOP_N×3 unique survivors  (default ~45)
-        │
-        ▼  Round 2 — concurrent speedtest again (same thread count)
-        │  confirm Round 1 results, drop flukes
-        ▼
-    ~TOP_N confirmed configs  (default ~15)
-        │
-        ▼  Round 3 — single-threaded, one by one (threads=1)
-        │  no parallel noise, most honest test
-        ▼
-      top 12 battle-hardened configs
-        │
-        ▼
-  last_config.json   (Xray leastPing balancer — ready to deploy)
-  last_configs.txt   (raw URIs — import into phone clients)
-```
-
-Only configs that survive all 3 rounds make it into the final `config.json`. The output uses Xray's `leastPing` balancer with observatory health checks so the best outbound is always selected at runtime automatically.
-
----
-
-## Requirements
-
-| Dependency | Purpose |
-|---|---|
-| `git` | will fetch the necessary packages during auto-install |
-| `xray-knife` | Subscription fetch + proxy testing |
-| `xray` | Config validation + runtime |
-| `python3` | CSV parsing + JSON assembly |
-| `jq` | JSON utility (used for validation) |
-| `wget` | xray-knife download during auto-install |
-| `unzip` | xray-knife extraction during auto-install |
-
-
-> **You do not need to install these manually.** Both scripts include a built-in dependency checker that detects what is missing, shows you the install plan, and asks for confirmation before running. See [Dependency auto-installer](#dependency-auto-installer) below.
 
 ---
 
 ## Installation
 
 ```bash
-git clone https://github.com/soroushyasini/proxysmith.git
-cd proxysmith
-chmod +x proxysmith.sh manualconfig.sh
+git clone https://github.com/a-amirfarzam/vst.gi
+cd vst
+chmod +x vst.sh manual.sh
 ```
 
 ---
