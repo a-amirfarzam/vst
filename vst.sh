@@ -779,10 +779,10 @@ if [[ "${1:-}" == "--deploy" ]]; then
     sudo systemctl is-active xray && ok "Xray is running" || warn "Check: journalctl -u xray -n 20"
 else
     echo -e "${YELLOW}To deploy:${NC}"
-    echo -e "  sudo cp $FINAL_CONFIG $OUTPUT_CONFIG"
+    echo -e "  sudo cp $SAVE_CONFIG $OUTPUT_CONFIG"
     echo -e "  sudo systemctl restart xray"
     echo ""
-    echo -e "${YELLOW}Or re-run with:${NC} $0 --deploy"
+    echo -e "${YELLOW}Or re-run with:${NC}  $0 --deploy"
 fi
 
 # =============================================================================
