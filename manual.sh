@@ -3,12 +3,12 @@
 # manualconfig.sh  —  Parse a hand-picked list of proxy URIs into config.json
 #
 # Usage:
-#   bash manualconfig.sh                        # reads manualconfig.txt, writes manualconfig.json
+#   bash manualconfig.sh                        # reads configsForManual.txt, writes manualconfig.json
 #   bash manualconfig.sh my_proxies.txt         # custom input file
 #   bash manualconfig.sh proxies.txt out.json   # custom input + output
 #   bash manualconfig.sh --deploy               # parse + deploy + restart xray
 #
-# Input format (manualconfig.txt):
+# Input format (configsForManual.txt):
 #   One URI per line. Blank lines and lines starting with # are ignored.
 #   Accepted protocols: vless, vmess, trojan, ss, shadowsocks, tuic, hysteria2, hy2
 #
@@ -20,7 +20,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # ── defaults (overridable by positional args) ─────────────────────────────────
-INPUT_FILE="$SCRIPT_DIR/manualconfig.txt"
+INPUT_FILE="$SCRIPT_DIR/configsForManual.txt"
 OUTPUT_FILE="$SCRIPT_DIR/manualconfig.json"
 DEPLOY=false
 
@@ -46,21 +46,32 @@ warn() { echo -e "${YELLOW}[!]${NC} $*"; }
 die()  { echo -e "${RED}[✗]${NC} $*" >&2; exit 1; }
 
 # ── banner ────────────────────────────────────────────────────────────────────
-echo -e "\033[0;31m"
-cat << 'BANNER'
-  ██████╗ ██████╗  ██████╗ ██╗  ██╗██╗   ██╗███████╗███╗   ███╗██╗████████╗██╗  ██╗
-  ██╔══██╗██╔══██╗██╔═══██╗╚██╗██╔╝╚██╗ ██╔╝██╔════╝████╗ ████║██║╚══██╔══╝██║  ██║
-  ██████╔╝██████╔╝██║   ██║ ╚███╔╝  ╚████╔╝ ███████╗██╔████╔██║██║   ██║   ███████║
-  ██╔═══╝ ██╔══██╗██║   ██║ ██╔██╗   ╚██╔╝  ╚════██║██║╚██╔╝██║██║   ██║   ██╔══██║
-  ██║     ██║  ██║╚██████╔╝██╔╝ ██╗   ██║   ███████║██║ ╚═╝ ██║██║   ██║   ██║  ██║
-  ╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝╚═╝     ╚═╝╚═╝   ╚═╝   ╚═╝  ╚═╝
+print_banner() {
+	clear
+    echo -e "\033[0;31m"
+    cat << 'BANNER'
+            ██╗   ██╗██████╗ ██████╗  █████╗ ██╗   ██╗        
+            ██║   ██║╚════██╗██╔══██╗██╔══██╗╚██╗ ██╔╝        
+            ██║   ██║ █████╔╝██████╔╝███████║ ╚████╔╝         
+            ╚██╗ ██╔╝██╔═══╝ ██╔══██╗██╔══██║  ╚██╔╝          
+             ╚████╔╝ ███████╗██║  ██║██║  ██║   ██║           
+              ╚═══╝  ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝           
+                                                  
+            ████████╗███████╗███████╗████████╗███████╗██████╗ 
+            ╚══██╔══╝██╔════╝██╔════╝╚══██╔══╝██╔════╝██╔══██╗
+               ██║   █████╗  ███████╗   ██║   █████╗  ██████╔╝
+               ██║   ██╔══╝  ╚════██║   ██║   ██╔══╝  ██╔══██╗
+               ██║   ███████╗███████║   ██║   ███████╗██║  ██║
+               ╚═╝   ╚══════╝╚══════╝   ╚═╝   ╚══════╝╚═╝  ╚═╝
 BANNER
-echo -e "\033[1;37m    Manual Config Builder  —  Skip the hunt, just parse and deploy\033[0m"
-echo -e "\033[0;90m            ─────────────────────────────────────────────────────────────\033[0m"
-echo -e "\033[0;90m            Author  :  Soroush Yasini\033[0m"
-echo -e "\033[0;90m            Repo    :  https://github.com/soroushyasini/proxysmith\033[0m"
-echo -e "\033[0;90m            ─────────────────────────────────────────────────────────────\033[0m"
-echo -e "\033[0m"
+    echo -e "\033[1;37mThe 3-Round Brutal Xray Config Builder With auto Balancer and xray Deployment\033[0m"
+    echo -e "\033[0;90m─────────────────────────────────────────────────────────────────────────────────────\033[0m"
+    echo -e "\033[0;90mDefault Config Source : \033[0m"
+    echo -e "\033[0;90mhttps://raw.githubusercontent.com/Epodonios/v2ray-configs/main/All_Configs_Sub.txt\033[0m"
+    echo -e "\033[0;90m─────────────────────────────────────────────────────────────────────────────────────\033[0m"
+    echo ""
+}
+print_banner
 
 # ── dep check (light — only xray-knife and python3 needed here) ───────────────
 echo -e "${WHITE}  🔍  Checking dependencies${NC}"
