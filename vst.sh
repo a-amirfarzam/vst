@@ -274,9 +274,9 @@ interactive_setup() {
     echo -e "${GREY}──────────────────────────────────────────────────${NC}\n"
     echo -e " ${BOLD}MAX_PING_MS${NC}"
     echo -e " ${DIM}Max latency threshold — configs slower than this are dropped in Round 1.${NC}"
-    echo -e " ${DIM}Inside Iran, public configs typically range 1000–3000ms. Use 5000 for a wide net.${NC}"
-    read -rp " Value [default: 5000, Enter to skip]: " input_ping
-    MAX_PING_MS="${input_ping:-5000}"
+    echo -e " ${DIM}Inside Iran, public configs typically range 1000–3000ms. Use 2000 for a wide net.${NC}"
+    read -rp " Value [default: 2000, Enter to skip]: " input_ping
+    MAX_PING_MS="${input_ping:-2000}"
     echo ""
 
     echo -e " ${BOLD}TOP_N${NC}"
@@ -370,6 +370,7 @@ csv_path = "$CSV"
 max_ping = $MAX_PING_MS
 top_n = $TOP_N * 3
 out_path = "$WORK_DIR/round1_winners.txt"
+all_out_path = "$WORK_DIR/all_passing.txt"
 
 def uri_key(uri):
     try:
@@ -405,11 +406,17 @@ with open(csv_path, encoding="latin-1", errors="replace") as raw_f:
 rows.sort(key=lambda x: x[0])
 selected = rows[:top_n]
 
+# Save ALL passing configs (no limit)
+with open(all_out_path, 'w') as f:
+    for lat, cfg in rows:
+        f.write(f"{cfg}\n")
+
+# Save top_n for next round
 with open(out_path, 'w') as f:
     for lat, cfg in selected:
         f.write(f"{lat}\t{cfg}\n")
 
-print(f"Round 1: {len(selected)} unique configs (from {len(rows)} passing filter, duplicates removed)")
+print(f"Round 1: {len(selected)} unique configs selected for next round (from {len(rows)} total passing filter, duplicates removed)")
 for lat, cfg in selected[:10]:
     proto = cfg.split('://')[0]
     print(f"  {lat:>5}ms {proto:<10} {cfg[:65]}")
@@ -422,8 +429,9 @@ R1_COUNT=$(wc -l < "$WORK_DIR/round1_winners.txt")
 ok "Round 1: $R1_COUNT unique configs selected"
 
 # =============================================================================
-# SAVE STEP 2: Configs that passed first test
+# SAVE STEP 2: All passing configs + Configs that passed first test
 # =============================================================================
+save_configs "00_all_passing" "$WORK_DIR/all_passing.txt"
 save_configs "01_pass1" "$WORK_DIR/round1_winners.txt"
 
 # =============================================================================
