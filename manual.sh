@@ -3,12 +3,12 @@
 # manualconfig.sh  —  Parse a hand-picked list of proxy URIs into config.json
 #
 # Usage:
-#   bash manualconfig.sh                        # reads configsForManual.txt, writes manualconfig.json
+#   bash manualconfig.sh                        # reads dasti.txt, writes manualconfig.json
 #   bash manualconfig.sh my_proxies.txt         # custom input file
 #   bash manualconfig.sh proxies.txt out.json   # custom input + output
 #   bash manualconfig.sh --deploy               # parse + deploy + restart xray
 #
-# Input format (configsForManual.txt):
+# Input format (dasti.txt):
 #   One URI per line. Blank lines and lines starting with # are ignored.
 #   Accepted protocols: vless, vmess, trojan, ss, shadowsocks, tuic, hysteria2, hy2
 #
@@ -20,7 +20,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # ── defaults (overridable by positional args) ─────────────────────────────────
-INPUT_FILE="$SCRIPT_DIR/configsForManual.txt"
+INPUT_FILE="$SCRIPT_DIR/dasti.txt"
 OUTPUT_FILE="$SCRIPT_DIR/manualconfig.json"
 DEPLOY=false
 
