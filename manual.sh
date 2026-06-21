@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # =============================================================================
-# manualconfig.sh  —  Parse a hand-picked list of proxy URIs into config.json
+# manual.sh  —  Parse a hand-picked list of proxy URIs into config.json
 #
 # Usage:
-#   bash manualconfig.sh                        # reads dasti.txt, writes manualconfig.json
-#   bash manualconfig.sh my_proxies.txt         # custom input file
-#   bash manualconfig.sh proxies.txt out.json   # custom input + output
-#   bash manualconfig.sh --deploy               # parse + deploy + restart xray
+#   bash manual.sh                        # reads dasti.txt, writes manualconfig.json
+#   bash manual.sh my_proxies.txt         # custom input file
+#   bash manual.sh proxies.txt out.json   # custom input + output
+#   bash manual.sh --deploy               # parse + deploy + restart xray
 #
 # Input format (dasti.txt):
 #   One URI per line. Blank lines and lines starting with # are ignored.
